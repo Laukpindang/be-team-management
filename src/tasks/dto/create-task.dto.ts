@@ -25,5 +25,10 @@ export class CreateTaskDto {
   @ApiProperty()
   @IsDateString()
   @IsNotEmpty()
-  due_date!: Date;
+  dueDate!: Date;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  eventId!: string;
 }

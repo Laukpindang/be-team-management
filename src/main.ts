@@ -15,11 +15,19 @@ async function bootstrap() {
     }),
   );
   app.enableCors();
+  app.enableShutdownHooks();
 
   const config = new DocumentBuilder()
     .setTitle('Team management API')
     .setDescription('API for uni assignment')
     .setVersion('1.0')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'Authorization',
+      in: 'header',
+    })
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, documentFactory);
