@@ -38,7 +38,7 @@ export class TeamsController {
     return this.teamsService.findAll(userId);
   }
 
-  @Get()
+  @Get('has-team')
   hasTeam(@CurrentUser('id') userId: string) {
     return this.teamsService.hasTeam(userId);
   }
@@ -46,6 +46,11 @@ export class TeamsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.teamsService.findOne(id);
+  }
+
+  @Get(':id/stats')
+  stats(@Param('id') id: string) {
+    return this.teamsService.getStats(id);
   }
 
   @Delete(':id')

@@ -1,6 +1,11 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { PrismaService } from '@/prisma/prisma.service';
+import { TaskStatus } from '@/generated/prisma/enums';
 
 @Injectable()
 export class TeamsService {
@@ -66,8 +71,8 @@ export class TeamsService {
     return newMember.id;
   }
 
-  remove(id: string) {
-    this.prisma.team.delete({ where: { id } });
+  async remove(id: string) {
+    await this.prisma.team.delete({ where: { id } });
   }
 
   hasTeam(userId: string) {
@@ -75,5 +80,84 @@ export class TeamsService {
       where: { userId },
       select: { id: true, team: { select: { id: true } } },
     });
+  }
+
+  async getStats(teamId: string) {
+    const team = await this.prisma.team.findUnique({
+      where: { id: teamId },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        members: {
+          select: {
+            role: true,
+          },
+        },
+        events: {
+          orderBy: { startTime: 'asc' },
+          select: {
+            id: true,
+            name: true,
+            startTime: true,
+            endTime: true,
+            tasks: {
+              select: {
+                status: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!team) {
+      throw new NotFoundException(`Team dengan id "${teamId}" tidak ditemukan`);
+    }
+
+    const totalMembers = team.members.length;
+
+    const eventsStats = team.events.map((event) => {
+      const totalTasks = event.tasks.length;
+      const unassignedCount = event.tasks.filter(
+        (t) => t.status === TaskStatus.UNASSIGNED,
+      ).length;
+      const inProgressCount = event.tasks.filter(
+        (t) => t.status === TaskStatus.IN_PROGRESS,
+      ).length;
+      const completedCount = event.tasks.filter(
+        (t) => t.status === TaskStatus.COMPLETED,
+      ).length;
+
+      const completionPercentage =
+        totalTasks > 0
+          ? Number(((completedCount / totalTasks) * 100).toFixed(1))
+          : 0;
+
+      return {
+        id: event.id,
+        name: event.name,
+        startTime: event.startTime,
+        endTime: event.endTime,
+        tasks: {
+          total: totalTasks,
+          unassigned: unassignedCount,
+          inProgress: inProgressCount,
+          completed: completedCount,
+          completionPercentage,
+        },
+      };
+    });
+
+    return {
+      teamId: team.id,
+      teamName: team.name,
+      teamDescription: team.description,
+      members: totalMembers,
+      events: {
+        total: eventsStats.length,
+        items: eventsStats,
+      },
+    };
   }
 }

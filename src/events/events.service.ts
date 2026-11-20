@@ -25,7 +25,7 @@ export class EventsService {
     return event;
   }
 
-  remove(teamId: string, id: string) {
-    this.prisma.event.delete({ where: { id, teamId } });
+  async remove(teamId: string, id: string) {
+    await this.prisma.event.delete({ where: { id, teamId } });
   }
 }
