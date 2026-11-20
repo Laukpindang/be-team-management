@@ -38,6 +38,11 @@ export class TeamsController {
     return this.teamsService.findAll(userId);
   }
 
+  @Get()
+  hasTeam(@CurrentUser('id') userId: string) {
+    return this.teamsService.hasTeam(userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.teamsService.findOne(id);

@@ -1,6 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateTeamDto } from './dto/create-team.dto';
-import { UpdateTeamDto } from './dto/update-team.dto';
 import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
@@ -69,5 +68,12 @@ export class TeamsService {
 
   remove(id: string) {
     this.prisma.team.delete({ where: { id } });
+  }
+
+  hasTeam(userId: string) {
+    return this.prisma.teamMember.findFirst({
+      where: { userId },
+      select: { id: true, team: { select: { id: true } } },
+    });
   }
 }
