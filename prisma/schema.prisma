@@ -90,5 +90,5 @@ model Task {
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   assigneeId String? @map("assignee_id")
-  assignee   User?   @relation(fields: [assigneeId], references: [id])
+  assignee   User?   @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
 }

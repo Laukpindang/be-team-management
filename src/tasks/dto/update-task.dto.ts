@@ -1,8 +1,14 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateTaskDto } from './create-task.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsIn, IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
-export type UpdateTaskDto = Partial<CreateTaskDto>;
+export class UpdateTaskDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsIn(['UNASSIGNED', 'IN_PROGRESS', 'COMPLETED'])
+  status!: 'UNASSIGNED' | 'IN_PROGRESS' | 'COMPLETED';
 
-export const UpdateTaskDto: new () => UpdateTaskDto = class extends PartialType(
-  CreateTaskDto,
-) {};
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  assigneeId?: string;
+}

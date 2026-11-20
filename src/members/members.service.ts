@@ -12,7 +12,7 @@ export class MembersService {
         role: true,
         createdAt: true,
         user: {
-          select: { email: true, name: true },
+          select: { email: true, name: true, id: true },
         },
       },
     });

@@ -5,6 +5,7 @@ import {
   IsDateString,
   MinLength,
   MaxLength,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateTaskDto {
@@ -29,6 +30,6 @@ export class CreateTaskDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  eventId!: string;
+  @IsOptional()
+  assigneeId?: string;
 }
