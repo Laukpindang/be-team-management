@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { TeamsModule } from './teams/teams.module';
 import { AuthModule } from './auth/auth.module';
 import { EventsModule } from './events/events.module';
+import { MembersModule } from './members/members.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { EventsModule } from './events/events.module';
     TasksModule,
     TeamsModule,
     EventsModule,
+    MembersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
